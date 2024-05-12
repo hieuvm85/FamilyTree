@@ -70,6 +70,7 @@ public class MemberController {
 		member.setFullName(memberRequest.getFullName());
 	    member.setDealDate(memberRequest.getDealDate());
 	    member.setBirthday(memberRequest.getBirthday());
+	    member.setSex(memberRequest.getSex());
 	    member.setPhone(memberRequest.getPhone());
 	    member.setMaritalStatus(memberRequest.getMaritalStatus());
 	    member.setJob(memberRequest.getJob());
@@ -107,6 +108,7 @@ public class MemberController {
 		member.setFullName(memberRequest.getFullName());
 	    member.setDealDate(memberRequest.getDealDate());
 	    member.setBirthday(memberRequest.getBirthday());
+	    member.setSex(memberRequest.getSex());
 	    member.setPhone(memberRequest.getPhone());
 	    member.setMaritalStatus(memberRequest.getMaritalStatus());
 	    member.setJob(memberRequest.getJob());
@@ -115,8 +117,7 @@ public class MemberController {
 	    member.setChildPosition(memberRequest.getChildPosition());
 	    member.setPhotoURL(memberRequest.getPhotoURL());
 	    member.setAddress(memberRequest.getAddress());
-	    member.setLongevity(memberRequest.getLongevity());	 
-	    
+	    member.setLongevity(memberRequest.getLongevity());	     
 		memberService.saveOrUpdate(member);
 		
 		return ResponseEntity.ok(member);

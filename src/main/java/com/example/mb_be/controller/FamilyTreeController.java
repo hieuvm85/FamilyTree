@@ -93,8 +93,8 @@ public class FamilyTreeController {
 		return ResponseEntity.ok(user.getFamilyTree()); 
 	}
 	
-	@GetMapping("/getTree")
-	public ResponseEntity<?> getFamilyByGeneration(@RequestParam("idTree") int idTree){
+	@GetMapping("/getGenTree")
+	public ResponseEntity<?> getGenFamilyByGeneration(@RequestParam("idTree") int idTree){
 		FamilyTree familyTree = familyTreeService.getFamilyTreeById(idTree);
 		List<Member> members = familyTree.getMember();
 		int maxGen=1;
@@ -102,9 +102,14 @@ public class FamilyTreeController {
 			if(member.getGeneration()>maxGen)
 				maxGen = member.getGeneration();
 		}
-		Map<Integer, NuclearFamily> data = new HashMap<>();
-		for(int i=1;i<= maxGen;i++) {
-			members = memberService.findByGenerationAndFamilytree_Id(i, idTree) ;
+		
+		return ResponseEntity.ok(maxGen); 
+	}
+	@GetMapping("/getTree")
+	public ResponseEntity<?> getFamilyByGeneration(@RequestParam("idTree") int idTree,@RequestParam("gen") int gen){
+
+			List<Member> members = memberService.findByGenerationAndFamilytree_Id(gen, idTree) ;
+			List<NuclearFamily> data= new ArrayList<>();
 			for(Member member:members) {
 				if(member.getFather()!=0) {
 					NuclearFamily nuclearFamily = new NuclearFamily();
@@ -117,12 +122,9 @@ public class FamilyTreeController {
 						soonsRes.add(new MemberResponse(soon));
 					}
 					nuclearFamily.setSoons(soonsRes);
-					data.put(i, nuclearFamily); 
+					data.add(nuclearFamily);
 				}
 			}
-		}
-		
-			
 		return ResponseEntity.ok(data); 
 	}
 	
