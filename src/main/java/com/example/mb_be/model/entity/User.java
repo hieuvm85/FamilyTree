@@ -29,9 +29,14 @@ public class User {
     @Column( nullable = false)
     
     private String password;
-    @OneToMany(mappedBy = "user")
-	@JsonBackReference
-	private List<FamilyTree> familyTree;
+    @ManyToMany
+    @JsonBackReference
+    @JoinTable(
+        name = "user_familytree",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "familytree_id")
+    )
+	private List<FamilyTree> familyTrees;
     
 
 	public int getId() {
@@ -117,11 +122,11 @@ public class User {
 
 
 	public List<FamilyTree> getFamilyTree() {
-		return familyTree;
+		return familyTrees;
 	}
 
 	public void setFamilyTree(List<FamilyTree> familyTree) {
-		this.familyTree = familyTree;
+		this.familyTrees = familyTree;
 	}
 
 

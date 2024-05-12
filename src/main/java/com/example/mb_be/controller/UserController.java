@@ -1,6 +1,7 @@
 package com.example.mb_be.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.mb_be.model.entity.FamilyTree;
 import com.example.mb_be.model.entity.User;
 import com.example.mb_be.model.request.LoginRequest;
 import com.example.mb_be.model.request.UserRequest;
 import com.example.mb_be.model.response.MessageResponse;
+import com.example.mb_be.model.service.FamilyTreeService;
 import com.example.mb_be.model.service.UserService;
 
 
@@ -26,6 +29,8 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+	@Autowired
+	FamilyTreeService familyTreeService;
 	
 	@PostMapping("/create")
 	public ResponseEntity<?> loggin(@RequestBody UserRequest userRequest){
@@ -63,4 +68,27 @@ public class UserController {
     public ResponseEntity<?> getUser(@RequestParam("id") int id){
     	return ResponseEntity.ok(userService.getUserById(id));
     }
+    
+    
+    @PostMapping("/share")
+    public ResponseEntity<?> share( @RequestParam("id") int id,  @RequestParam("usernameFriend") String username){
+    	//user 1 share cho user 2
+    	User user1= userService.getUserById(id);
+    	User user2= userService.getByUsername(username); 
+    	if(user2==null)
+    		return ResponseEntity.ok(new MessageResponse("Success"));
+    	
+    	List<FamilyTree> familyTrees1= user1.getFamilyTree();
+    	List<FamilyTree> familyTrees2= user2.getFamilyTree();
+    	for(FamilyTree familyTree :familyTrees1) {
+    		if(!familyTrees2.contains(familyTree)) {
+    			familyTrees2.add(familyTree);
+    		}
+    	}
+    	user2.setFamilyTree(familyTrees2);
+    	userService.saveOrUpdate(user2);
+    	
+    	return ResponseEntity.ok(new MessageResponse("Success"));
+    }
+    
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -27,9 +28,12 @@ public class FamilyTree {
 	private String creator;
 	private String dynamicLink;
 	private String published;
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	
+	@ManyToMany(mappedBy = "familyTrees")
+	@JsonBackReference
+    private List<User> users;
+	
+	
 	@OneToMany(mappedBy = "familytree")
 	@JsonBackReference
 	private List<Member> member;
@@ -102,12 +106,14 @@ public class FamilyTree {
 		this.published = published;
 	}
 
-	public User getUser() {
-		return user;
+
+
+	public List<User> getUsers() {
+		return users;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	public List<Member> getMember() {

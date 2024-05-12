@@ -46,9 +46,16 @@ public class FamilyTreeController {
 	    familyTree.setCreator(familyTreeRequest.getCreator());
 	    familyTree.setDynamicLink(familyTreeRequest.getDynamicLink());
 	    familyTree.setPublished(familyTreeRequest.getPublished());
+	    familyTreeService.saveOrUpdate(familyTree);
 	    
-	    User user = userService.getUserById(idUser);
-	    familyTree.setUser(user);
+	    List<FamilyTree> familyTrees =new ArrayList<>();
+	    familyTrees.add(familyTree);
+	    User user = userService.getUserById(idUser); 
+	    user.setFamilyTree(familyTrees);
+	    userService.saveOrUpdate(user);
+	    List<User> users = new ArrayList<>();
+	    users.add(user);
+	    familyTree.setUsers(users);
 	    
 	    
 	    
