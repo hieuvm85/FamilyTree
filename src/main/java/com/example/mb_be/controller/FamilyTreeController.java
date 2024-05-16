@@ -48,9 +48,9 @@ public class FamilyTreeController {
 	    familyTree.setPublished(familyTreeRequest.getPublished());
 	    familyTreeService.saveOrUpdate(familyTree);
 	    
-	    List<FamilyTree> familyTrees =new ArrayList<>();
-	    familyTrees.add(familyTree);
 	    User user = userService.getUserById(idUser); 
+	    List<FamilyTree> familyTrees =user.getFamilyTree();
+	    familyTrees.add(familyTree);
 	    user.setFamilyTree(familyTrees);
 	    userService.saveOrUpdate(user);
 	    List<User> users = new ArrayList<>();
@@ -120,13 +120,27 @@ public class FamilyTreeController {
 			for(Member member:members) {
 				if(member.getFather()!=0) {
 					NuclearFamily nuclearFamily = new NuclearFamily();
-					nuclearFamily.setMainMember(new MemberResponse(member));
+					// set main
+					if(member.getFather()>0) {
+						Member faMain =  memberService.getMemberById(member.getFather());
+						Member moMain =  memberService.getMemberById(member.getMother());
+						nuclearFamily.setMainMember(new MemberResponse(member,faMain.getFullName(),moMain.getFullName()));
+					}
+					else
+						nuclearFamily.setMainMember(new MemberResponse(member,"No","No"));
+					//set mate
+					String nameMate = "No";
 					if(member.getMate()!=0)
-						nuclearFamily.setMateMember(new MemberResponse(memberService.getMemberById(member.getMate())));	
+					{
+						nuclearFamily.setMateMember(new MemberResponse(memberService.getMemberById(member.getMate()),"No","No"));
+						nameMate = nuclearFamily.getMateMember().getFullName();
+					}
+					//set soons
 					List<Member> soons = memberService.findByFatherOrMother(member.getId(),member.getId());
 					List<MemberResponse> soonsRes = new ArrayList<>();
 					for(Member soon:soons) {
-						soonsRes.add(new MemberResponse(soon));
+						if(nuclearFamily.getMainMember().getSex()==0)
+							soonsRes.add(new MemberResponse(soon,nuclearFamily.getMainMember().getFullName(),nameMate));
 					}
 					nuclearFamily.setSoons(soonsRes);
 					data.add(nuclearFamily);

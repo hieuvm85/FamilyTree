@@ -2,9 +2,13 @@ package com.example.mb_be.model.response;
 
 import java.time.LocalDate;
 
-import com.example.mb_be.model.entity.Member;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import jakarta.persistence.Column;
+import com.example.mb_be.model.entity.Member;
+import com.example.mb_be.model.service.MemberService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 public class MemberResponse {
 	private int id;
@@ -28,14 +32,15 @@ public class MemberResponse {
 	private int longevity;
 	
 	private LocalDate ngayGioAL;
+	private String father;
+	private String morhter;
+
+	
+
 
 	
 	
-	
-	
-	
-	
-	public MemberResponse(Member member) {
+	public MemberResponse(Member member,String nameFather,String nameMother) {		
 		super();
 		this.id = member.getId();
 		this.fullName = member.getFullName();
@@ -53,6 +58,8 @@ public class MemberResponse {
 		this.address = member.getAddress();
 		this.longevity = member.getLongevity();
 		this.ngayGioAL = member.getNgayGioAL();
+		this.morhter = nameMother;
+		this.father = nameFather;
 	}
 	
 	
@@ -183,6 +190,30 @@ public class MemberResponse {
 
 	public void setNgayGioAL(LocalDate ngayGioAL) {
 		this.ngayGioAL = ngayGioAL;
+	}
+
+
+
+	public String getFather() {
+		return father;
+	}
+
+
+
+	public void setFather(String father) {
+		this.father = father;
+	}
+
+
+
+	public String getMorhter() {
+		return morhter;
+	}
+
+
+
+	public void setMorhter(String morhter) {
+		this.morhter = morhter;
 	}
 	
 }
