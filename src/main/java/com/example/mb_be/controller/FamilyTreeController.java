@@ -18,6 +18,7 @@ import com.example.mb_be.model.entity.FamilyTree;
 import com.example.mb_be.model.entity.Member;
 import com.example.mb_be.model.entity.User;
 import com.example.mb_be.model.request.FamilyTreeRequest;
+import com.example.mb_be.model.response.MateMemberRequest;
 import com.example.mb_be.model.response.MemberResponse;
 import com.example.mb_be.model.response.NuclearFamily;
 import com.example.mb_be.model.service.FamilyTreeService;
@@ -77,7 +78,7 @@ public class FamilyTreeController {
 	    member.setLongevity(0);
 	    member.setFather(-1);
 	    member.setMother(-1);
-	    
+	    member.setMates(new ArrayList<>());
 	    
 	    familyTree.setMember(new ArrayList<>());
 	    
@@ -121,6 +122,7 @@ public class FamilyTreeController {
 				if(member.getFather()!=0) {
 					NuclearFamily nuclearFamily = new NuclearFamily();
 					// set main
+					// kiem tra xem member nay co bo hay me khong
 					if(member.getFather()>0) {
 						Member faMain =  memberService.getMemberById(member.getFather());
 						Member moMain =  memberService.getMemberById(member.getMother());
@@ -128,21 +130,32 @@ public class FamilyTreeController {
 					}
 					else
 						nuclearFamily.setMainMember(new MemberResponse(member,"No","No"));
-					//set mate
-					String nameMate = "No";
-					if(member.getMate()!=0)
-					{
-						nuclearFamily.setMateMember(new MemberResponse(memberService.getMemberById(member.getMate()),"No","No"));
-						nameMate = nuclearFamily.getMateMember().getFullName();
-					}
+					
+					//set mates
+					List<MateMemberRequest> mates =  new ArrayList<>();
+					for(int idMate: member.getMates()) {
+						Member mate = memberService.getMemberById(idMate);
+						
+						MateMemberRequest mateRes = new MateMemberRequest(); 
+						
+						mateRes.setMate(new MemberResponse(mate,"No","No"));
+						
+						List<Member> soons = memberService.findByFatherOrMother(idMate,idMate);
+						List<MemberResponse> soonsRes = new ArrayList<>();
+						for(Member soon:soons) {
+							if(nuclearFamily.getMainMember().getSex()==0)
+								soonsRes.add(new MemberResponse(soon,nuclearFamily.getMainMember().getFullName(),mate.getFullName()));
+							else
+								soonsRes.add(new MemberResponse(soon,mate.getFullName(),nuclearFamily.getMainMember().getFullName()));
+						}
+						mateRes.setSoons(soonsRes);
+						
+						mates.add(mateRes);
+					}				
+										
 					//set soons
-					List<Member> soons = memberService.findByFatherOrMother(member.getId(),member.getId());
-					List<MemberResponse> soonsRes = new ArrayList<>();
-					for(Member soon:soons) {
-						if(nuclearFamily.getMainMember().getSex()==0)
-							soonsRes.add(new MemberResponse(soon,nuclearFamily.getMainMember().getFullName(),nameMate));
-					}
-					nuclearFamily.setSoons(soonsRes);
+					
+					nuclearFamily.setMateMembers(mates);
 					data.add(nuclearFamily);
 				}
 			}

@@ -2,8 +2,10 @@ package com.example.mb_be.model.entity;
 
 
 import java.time.LocalDate;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+
 
 import jakarta.persistence.*;
 
@@ -32,7 +34,9 @@ public class Member {
 	private String education;
 	private String email;
 	
-	private int mate;
+	@ElementCollection
+	@CollectionTable(name = "member_mates")
+	private List<Integer> mates;
 	
 	@Column(name = "child_position")
 	private int childPosition;
@@ -160,12 +164,22 @@ public class Member {
 		this.email = email;
 	}
 
-	public int getMate() {
-		return mate;
+
+
+	public List<Integer> getMates() {
+		return mates;
 	}
 
-	public void setMate(int mate) {
-		this.mate = mate;
+	public void setMates(List<Integer> mates) {
+		this.mates = mates;
+	}
+
+	public FamilyTree getFamilytree() {
+		return familytree;
+	}
+
+	public void setFamilytree(FamilyTree familytree) {
+		this.familytree = familytree;
 	}
 
 	public int getChildPosition() {

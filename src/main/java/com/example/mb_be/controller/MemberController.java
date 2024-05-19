@@ -1,8 +1,10 @@
 package com.example.mb_be.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,19 +48,22 @@ public class MemberController {
 	    member.setAddress(memberRequest.getAddress());
 	    member.setLongevity(memberRequest.getLongevity());
 	    
-	    Member faOrMo = memberService.getMemberById(idMember);
+	    Member mate  = memberService.getMemberById(idMember);
 	  
-	   	member.setFamilyTree(faOrMo.getFamilyTree());
-	   	member.setGeneration(faOrMo.getGeneration());
-	   	member.setMate(idMember);
+	   	member.setFamilyTree(mate.getFamilyTree());
+	   	member.setGeneration(mate.getGeneration());
+	   	List<Integer> mates = new ArrayList<>();
+	   	mates.add(idMember);
+	   	member.setMates(mates);
 
 	   	member.setFather(0);
 		member.setMother(0);
 
 		memberService.saveOrUpdate(member);
-		
-		faOrMo.setMate(member.getId());
-		memberService.saveOrUpdate(faOrMo);
+		mates = mate.getMates();
+		mates.add(member.getId());
+		mate.setMates(mates);
+		memberService.saveOrUpdate(mate);
 		return ResponseEntity.ok(member);
 	}
 	@PostMapping("/create/soon")
@@ -85,19 +90,18 @@ public class MemberController {
 	  
 	   	member.setFamilyTree(faOrMo.getFamilyTree());
 	   	member.setGeneration(faOrMo.getGeneration()+1);
-	   	member.setMate(0);
+	   	member.setMates( new ArrayList<>());
 	   	
 	   	if(faOrMo.getSex()==0) {
 	   		member.setFather(idMember);
-	   		member.setMother(faOrMo.getMate());
+	   		member.setMother(faOrMo.getMates().get(0));
 	   	}
 	   	else {
 	   		member.setMother(idMember);
-	   		member.setFather(faOrMo.getMate());
+	   		member.setFather(faOrMo.getMates().get(0));
 	   	}
 		memberService.saveOrUpdate(member);
-		
-
+	
 		return ResponseEntity.ok(member);
 	}
 	@PutMapping("/update")

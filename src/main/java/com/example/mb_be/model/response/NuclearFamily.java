@@ -4,26 +4,18 @@ import java.util.List;
 
 public class NuclearFamily {
 	private MemberResponse mainMember;
-	private MemberResponse mateMember;
-	private List<MemberResponse> soons;
+	private List<MateMemberRequest> mateMembers;
+	
 	public MemberResponse getMainMember() {
 		return mainMember;
 	}
 	public void setMainMember(MemberResponse mainMember) {
 		this.mainMember = mainMember;
 	}
-	public MemberResponse getMateMember() {
-		return mateMember;
+	public List<MateMemberRequest> getMateMembers() {
+		return mateMembers;
 	}
-	public void setMateMember(MemberResponse mateMember) {
-		this.mateMember = mateMember;
+	public void setMateMembers(List<MateMemberRequest> mateMembers) {
+		this.mateMembers = mateMembers;
 	}
-	public List<MemberResponse> getSoons() {
-		return soons;
-	}
-	public void setSoons(List<MemberResponse> soons) {
-		this.soons = soons;
-	}
-	
-	
 }
